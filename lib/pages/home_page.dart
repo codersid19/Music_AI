@@ -1,3 +1,4 @@
+import 'package:alan_voice/alan_voice.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    setupAlan();
     fetchradios();
 
     audioPlayer.onPlayerStateChanged.listen((event) { 
@@ -38,6 +40,12 @@ class _HomePageState extends State<HomePage> {
       });
     });
     
+  }
+
+  setupAlan(){
+    AlanVoice.addButton(
+        "2b3d04c057be79faefc14d4cfe5eabbd2e956eca572e1d8b807a3e2338fdd0dc/stage",
+        buttonAlign: AlanVoice.BUTTON_ALIGN_LEFT);
   }
   playmusic(String url){
       audioPlayer.play(url);

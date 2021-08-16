@@ -15,16 +15,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<MyRadio> radios = [];
-  late MyRadio selectedRadio;
+  late MyRadio selectedRadio; 
+  String radi= '';
   late Color selectedColor;
   bool isPlaying = false;
 
   final AudioPlayer audioPlayer = AudioPlayer();
   @override
   void initState() {
-    fetchradios();
     super.initState();
+    fetchradios();
+
+    audioPlayer.onPlayerStateChanged.listen((event) { 
+      if(event == PlayerState.PLAYING){
+        isPlaying = true;
+      }
+      else{
+        isPlaying = false;
+      }
+      setState(() {
+        
+      });
+    });
+    
   }
+  playmusic(String url){
+      audioPlayer.play(url);
+      selectedRadio = radios.firstWhere((element) => element == url);
+      print(selectedRadio);
+      radi = selectedRadio.name;
+      setState(() {
+        
+      });
+
+    }
 
 
   fetchradios() async{
@@ -34,6 +58,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       
     });
+
+    
 
   }
   @override
@@ -90,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white,
                     ),
                   ),
-                
+              
 
               ])
             )
@@ -98,20 +124,43 @@ class _HomePageState extends State<HomePage> {
             .border()
             .withRounded(value: 50.0)
             .make()
-            .onTap(() {})
+            .onDoubleTap(() {
+              playmusic(rad.url);
+            })
             .p16()
             .centered();
+            
           }
+        
           ),
-          Align(
+          ZStack(
+            [
+               Align(
                   alignment: Alignment.bottomCenter,
-                  child: Icon( 
-                    Icons.stop_circle_outlined,
+                  child: Text(isPlaying?radi:"Not Playing", style: TextStyle(fontSize: 18, color: Colors.black),),
+                ).pOnly( bottom: context.percentHeight*22),
+                 Align(
+                  alignment: Alignment.bottomCenter,
+                  child: [
+                    Icon( 
+                    isPlaying?Icons.stop_circle_outlined:Icons.play_circle_fill_outlined,
                     size: 80,
                     color: Colors.black, 
-                  ),
-                ).pOnly( bottom: context.percentHeight*12),
+                  ).onInkTap(() {
+                    if(isPlaying){
+                      audioPlayer.stop();
+                    }
+                    else{
+                      playmusic(selectedRadio.url);
+                    }
+                  }),].vStack(),
+                ).pOnly( bottom: context.percentHeight*8),
+           
+            ]
+          ),
+         
         ],
+        
         fit: StackFit.expand,
       ),
     );
